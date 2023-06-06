@@ -13,54 +13,76 @@ td {
 </style>
 <body>
 <script>
+
 let data = [
-  [" "," "," "," "," "," ", 0 , 0 , 0 , 0 , 0 , 0 ," "," "," "],
-  [" "," "," "," "," "," ", 0 ," "," "," "," ", 0 ," "," "," "],
-  [" "," ","t","t","t", 0 , 0 ," "," "," ","m","m","m", 0 ," "],
-  [ 0 , 0 ,"t"," ","t"," "," "," ", 0 , 0 ,"m", 0 ,"m"," "," "],
-  [ 0 ," ","t","t","t", 0 , 0 ," "," "," ","m","m","m", 0 , 0 ],
-  [ 0 ," "," ", 0 ," "," ", 0 ," "," "," "," ", 0 ," "," "," "],
-  [ 0 ," "," ", 0 ," "," ", 0 , 0 , 0 , 0 , 0 , 0 ," "," "," "]
+//      0   1   2   3   4   5   6   7   8   9  10  11  12
+/*0*/ [" "," "," "," "," "," "," "," "," "," ", 0 ," "," "],
+/*1*/ [" "," "," "," ", 0 ," "," "," "," "," "," "," ", 0 ],
+/*2*/ [ 0 ," "," "," "," "," "," "," ", 1 ," "," "," "," "],
+/*3*/ [" "," "," "," ", 0 ," "," "," "," "," "," "," ", 0 ],
+/*4*/ [" "," ", 0 ," "," "," "," "," "," "," ", 0 ," "," "]
 ];
 
-function draw() {
-data[3][1] = data[3][0] = data[4][0] = data[5][0] = data[6][0]; // Write
-data[5][3] = data[6][3]; // Data
+function calc(r, c) {
 
-if (data[5][3] === 1) {data[4][5] = data[3][1]; data[2][5] = 0;}
-if (data[5][3] === 0) {data[2][5] = data[3][1]; data[4][5] = 0;}
-data[1][11] = data[0][11] = data[0][10] = data[0][9] = data[0][8] = data[0][7] = data[0][6] = data[1][6] = data[2][6] = data[2][5];
-data[5][11] = data[6][11] = data[6][10] = data[6][9] = data[6][8] = data[6][7] = data[6][6] = data[5][6] = data[4][6] = data[4][5];
-
-if (data[5][11] === 1) {data[3][11] = 1;} // Mem 1
-if (data[1][11] === 1) {data[3][11] = 0;} // Mem 0
-
-data[3][9] = data[3][8]; // Read
-
-if (data[3][11] === 1) {data[4][13] = data[3][9]; data[2][13] = 0;}
-if (data[3][11] === 0) {data[2][13] = data[3][9]; data[4][13] = 0;}
-data[4][14] = data[4][13];
-
-let content = '<table>';
-for (let i = 0; i < data.length; i++) {
-  content += '<tr>';
-  for (let j = 0; j < data[0].length; j++) {
-    if (data[i][j] === 1) {
-      content += '<td style="background-color: red;">' + data[i][j] + '</td>';
-    } else {
-      content += '<td id="r' + i + 'c' + j + '">' + data[i][j] + '</td>';
+  for (let i = 1; i < 4; i++) {
+    for (let j = 1; j < 4; j++) {
+      if (i === 2 && j === 2) {continue;}
+      data[r+i][c+j] = "t";
+      data[r+i][c+j+8] = "m";
     }
   }
- content += '</tr>';
+
+  // (d === 1) {o = w; p = 0}
+  // (d === 0) {p = w; o = 0}
+  if (data[r+4][c+2] === 1) {data[r+3][c+4] = data[r+2][c+0]; data[r+1][c+4] = 0;}
+  if (data[r+4][c+2] === 0) {data[r+1][c+4] = data[r+2][c+0]; data[r+3][c+4] = 0;}
+
+  data[r+4][c+10] = data[r+3][c+4]; // m1 cable
+  data[r+0][c+10] = data[r+1][c+4]; // m0 cable
+
+  if (data[r+4][c+10] === 1) {data[r+2][c+10] = 1;} // (m1 === 1) {m = 1}
+  if (data[r+0][c+10] === 1) {data[r+2][c+10] = 0;} // (m0 === 1) {m = 0}
+
+  // (m === 1) {o = d}
+  // (m === 0) {o = 0}
+  if (data[r+2][c+10] === 1) {data[r+3][c+12] = data[r+2][c+8]; data[r+1][c+12] = 0;}
+  if (data[r+2][c+10] === 0) {data[r+1][c+12] = data[r+2][c+8]; data[r+3][c+12] = 0;}
 }
-content += '</table>';
-document.body.innerHTML = content;
+
+function draw() {
+  calc(0, 0); // x
+  let content = '<table>';
+  for (let i = 0; i < data.length; i++) {
+    content += '<tr>';
+    for (let j = 0; j < data[0].length; j++) {
+      if (data[i][j] === " ") {
+        content += '<td style="background-color: white;">' + data[i][j] + '</td>';
+      }
+      if (data[i][j] === "t") {
+        content += '<td style="background-color: dodgerblue;">' + data[i][j] + '</td>';
+      }
+      if (data[i][j] === "m") {
+        content += '<td style="background-color: lime;">' + data[i][j] + '</td>';
+      }
+      if (data[i][j] === 0) {
+        content += '<td style="background-color: gray;">' + data[i][j] + '</td>';
+      }
+      if (data[i][j] === 1) {
+        content += '<td style="background-color: red;">' + data[i][j] + '</td>';
+      }
+    }
+    content += '</tr>';
+  }
+  content += '</table>';
+  document.body.innerHTML = content;
 }
+
 draw();
-setTimeout(function() {data[6][0] = 1; draw();}, 1000);
-setTimeout(function() {data[6][3] = 1; draw();}, 2000);
-setTimeout(function() {data[6][0] = 0; draw();}, 3000);
-setTimeout(function() {data[3][8] = 1; draw();}, 4000);
+setTimeout(function() {data[2][0] = 1; draw();}, 1000);
+setTimeout(function() {data[4][2] = 1; draw();}, 2000);
+setTimeout(function() {data[2][0] = 0; draw();}, 3000);
+setTimeout(function() {data[4][2] = 0; draw();}, 4000);
 
 </script>
 </body>
