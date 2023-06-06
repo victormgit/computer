@@ -1,0 +1,66 @@
+<title>Memory</title>
+<style>
+table {
+  border-collapse: collapse;
+}
+td {
+  border: 2px solid;
+  font-family: monospace;
+  width: 22px;
+  height: 26px;
+  text-align: center;
+}
+</style>
+<body>
+<script>
+let data = [
+  [" "," "," "," "," "," ", 0 , 0 , 0 , 0 , 0 , 0 ," "," "," "],
+  [" "," "," "," "," "," ", 0 ," "," "," "," ", 0 ," "," "," "],
+  [" "," ","t","t","t", 0 , 0 ," "," "," ","m","m","m", 0 ," "],
+  [ 0 , 0 ,"t"," ","t"," "," "," ", 0 , 0 ,"m", 0 ,"m"," "," "],
+  [ 0 ," ","t","t","t", 0 , 0 ," "," "," ","m","m","m", 0 , 0 ],
+  [ 0 ," "," ", 0 ," "," ", 0 ," "," "," "," ", 0 ," "," "," "],
+  [ 0 ," "," ", 0 ," "," ", 0 , 0 , 0 , 0 , 0 , 0 ," "," "," "]
+];
+
+function draw() {
+data[3][1] = data[3][0] = data[4][0] = data[5][0] = data[6][0]; // Write
+data[5][3] = data[6][3]; // Data
+
+if (data[5][3] === 1) {data[4][5] = data[3][1]; data[2][5] = 0;}
+if (data[5][3] === 0) {data[2][5] = data[3][1]; data[4][5] = 0;}
+data[1][11] = data[0][11] = data[0][10] = data[0][9] = data[0][8] = data[0][7] = data[0][6] = data[1][6] = data[2][6] = data[2][5];
+data[5][11] = data[6][11] = data[6][10] = data[6][9] = data[6][8] = data[6][7] = data[6][6] = data[5][6] = data[4][6] = data[4][5];
+
+if (data[5][11] === 1) {data[3][11] = 1;} // Mem 1
+if (data[1][11] === 1) {data[3][11] = 0;} // Mem 0
+
+data[3][9] = data[3][8]; // Read
+
+if (data[3][11] === 1) {data[4][13] = data[3][9]; data[2][13] = 0;}
+if (data[3][11] === 0) {data[2][13] = data[3][9]; data[4][13] = 0;}
+data[4][14] = data[4][13];
+
+let content = '<table>';
+for (let i = 0; i < data.length; i++) {
+  content += '<tr>';
+  for (let j = 0; j < data[0].length; j++) {
+    if (data[i][j] === 1) {
+      content += '<td style="background-color: red;">' + data[i][j] + '</td>';
+    } else {
+      content += '<td id="r' + i + 'c' + j + '">' + data[i][j] + '</td>';
+    }
+  }
+ content += '</tr>';
+}
+content += '</table>';
+document.body.innerHTML = content;
+}
+draw();
+setTimeout(function() {data[6][0] = 1; draw();}, 1000);
+setTimeout(function() {data[6][3] = 1; draw();}, 2000);
+setTimeout(function() {data[6][0] = 0; draw();}, 3000);
+setTimeout(function() {data[3][8] = 1; draw();}, 4000);
+
+</script>
+</body>
